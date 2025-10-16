@@ -1,0 +1,62 @@
+# --- OS / IDE ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+# --- Python / Build ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.dll
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+*.orig
+dist/
+build/
+*.egg-info/
+
+# --- Virtualenv ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Test / Coverage ---
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+
+# --- Streamlit ---
+.streamlit/
+.streamlit/secrets.toml
+
+# --- Project Artifacts ---
+model/bug_severity_model.pkl
+results_mutatest/
+prioritizer/ordered_tests.csv
+features/
+mutation/
+reports/
+*.jsonl
+
+# --- Cache / Data (optional) ---
+data/*.parquet
+data/*.feather
+data/*.tsv
+data/tmp/
+!data/bugs.csv
+
+# --- Notebooks ---
+*.ipynb_checkpoints/
+
+# --- OS locks ---
+~$*
