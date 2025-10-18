@@ -121,5 +121,5 @@ pytest --cov=app --cov-report=term-missing
 ---
 
 ## 🧑‍💻 Author
-Developed by **Alireza Rahimipour**  
+Developed by **Alireza Rahimipour Anaraki**  
 MSc Software Engineering — *AI and Software Testing Research*
