@@ -1,0 +1,6 @@
+req_id,description,priority
+REQ-001,System shall handle invalid inputs with proper errors,High
+REQ-002,API /login shall not return 5xx on empty payload,High
+REQ-003,UI layout shall remain aligned on settings page,Medium
+REQ-004,System generic checks shall pass under normal conditions,Medium
+REQ-005,Search operation shall respond within acceptable latency,High

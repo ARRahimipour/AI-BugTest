@@ -1,0 +1,6 @@
+item,description,impact,likelihood,owner,mitigation
+InputValidation,Invalid/empty/emoji/large inputs cause failure,High,Medium,QA,Add validation & negative tests
+AuthAPI,/api/login 5xx on malformed JSON,High,Medium,Backend,Add server-side checks & contract tests
+UIAlignment,Visual misalignment on settings page,Low,Medium,Frontend,Add visual regression checks
+Performance,Slow response under load,Medium,Medium,DevOps,Add perf tests & monitoring
+CrashHandling,Unhandled exceptions trigger crashes,High,Low,Backend,Add defensive coding & crash tests
