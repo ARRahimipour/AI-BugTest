@@ -31,7 +31,7 @@ def main():
         print(f"❌ Coverage below threshold ({COVERAGE_MIN:.0%}).")
         sys.exit(1)
 
-    print("✅ Quality gates passed.")
+    print("Quality gates passed.")
     sys.exit(0)
 
 if __name__ == "__main__":

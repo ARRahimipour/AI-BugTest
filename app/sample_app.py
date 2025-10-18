@@ -10,3 +10,12 @@ def check_ui_alignment():
 
 def generic_check():
     return True
+
+def run_test_case(name: str):
+    if name == "crash_input":
+        raise Exception("Crashed as expected")
+    
+# def run_test_case(name: str):
+#     if name == "crash_input":
+#         # simulate handled case (no crash)
+#         return "ok"

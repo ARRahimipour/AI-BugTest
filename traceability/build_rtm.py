@@ -1,39 +1,38 @@
-from pathlib import Path
-import subprocess, re
-import pandas as pd
+import os
+import csv
+import re
 
-ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "traceability" / "rtm.csv"
+TESTS_DIR = "tests"
+RTM_FILE = "traceability/rtm.csv"
 
-def collect_nodeids():
-    r = subprocess.run(["pytest", "--collect-only", "-q"], cwd=ROOT, capture_output=True, text=True)
-    r.check_returncode()
-    return [ln.strip() for ln in r.stdout.splitlines() if "::" in ln]
+REQ_PATTERN = re.compile(r"REQ-[A-Z0-9]+")
 
-def inspect_markers(nodeid: str):
-    file_path = ROOT / nodeid.split("::")[0]
-    text = file_path.read_text(encoding="utf-8", errors="ignore")
-    msev = re.search(r'@pytest\.mark\.severity\("([^"]+)"\)', text)
-    mtyp = re.search(r'@pytest\.mark\.type\("([^"]+)"\)', text)
-    mreq = re.search(r'@pytest\.mark\.req\("([^"]+)"\)', text)
-    return {
-        "severity": msev.group(1) if msev else "",
-        "type": mtyp.group(1) if mtyp else "",
-        "req_id": mreq.group(1) if mreq else "",
-    }
+def extract_requirements_from_test(test_file):
+    with open(test_file, encoding="utf-8") as f:
+        content = f.read()
+    return list(set(REQ_PATTERN.findall(content)))
 
-def main():
-    nodeids = collect_nodeids()
+def build_rtm():
     rows = []
-    for nid in nodeids:
-        meta = inspect_markers(nid)
-        rows.append({"test_name": nid, **meta})
+    for root, _, files in os.walk(TESTS_DIR):
+        for file in files:
+            if file.startswith("test_") and file.endswith(".py"):
+                path = os.path.join(root, file)
+                reqs = extract_requirements_from_test(path)
+                if reqs:
+                    for r in reqs:
+                        rows.append({"requirement_id": r, "test_file": file})
+                else:
+                    rows.append({"requirement_id": "UNKNOWN", "test_file": file})
 
-    df = pd.DataFrame(rows)
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(OUT, index=False)
-    print(f"✅ wrote {OUT}")
-    print(df.head())
+    os.makedirs(os.path.dirname(RTM_FILE), exist_ok=True)
+    with open(RTM_FILE, "w", newline="", encoding="utf-8") as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=["requirement_id", "test_file"])
+        writer.writeheader()
+        writer.writerows(rows)
+
+    print(f"RTM built successfully at: {RTM_FILE}")
+    print(f"📄 Total test mappings: {len(rows)}")
 
 if __name__ == "__main__":
-    main()
+    build_rtm()
