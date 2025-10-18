@@ -1,51 +1,53 @@
 # 🧠 AI-BugTest  
-**AI-driven Adaptive Test Case Generation and Prioritization System (ISTQB®-Aligned)**  
-
-This project implements an **AI-powered software testing assistant** that predicts the severity of software defects, automatically generates test cases based on defect descriptions, and prioritizes them using **risk-based testing principles** defined by **ISTQB®**.  
-It integrates NLP, test automation, and DevOps-style execution — ideal for graduate-level research or advanced software testing coursework.
+### Intelligent Test Generation and Prioritization System (ISTQB® Aligned)
 
 ---
 
-## 🚀 Key Features
+## 🎯 Overview
+**AI-BugTest** is a research-driven, intelligent testing framework that combines  
+machine learning and ISTQB® principles to **predict defect severity**,  
+**generate test cases automatically**, and **prioritize test execution** based on risk.
 
-- 🧠 **AI-driven defect severity prediction** using NLP (TF-IDF + Logistic Regression)
-- 🧩 **Automatic test generation** (Crash, API, Performance, Validation, UI)
-- ⚖️ **Risk-based test prioritization** (Impact × Likelihood)
-- ▶️ **Automated test execution** directly from Streamlit UI (via `pytest`)
-- 📈 **Coverage reporting** and regression-ready test pipeline
-- 💡 **Fully compliant with ISTQB® concepts** — Defect Severity, Risk-Based Testing, Test Design, Automation, Regression Testing
+It is part of an **MSc-level project** for the *Advanced Software Testing* course,  
+demonstrating the integration of **AI**, **Risk-Based Testing (RBT)**,  
+and **Quality Gates** within a reproducible test pipeline.
 
 ---
 
-## 📂 Project Structure
+## 🧩 Key Features
 
+| Category | Description |
+|-----------|-------------|
+| **AI-Driven Severity Prediction** | Uses NLP (TF-IDF + Logistic Regression) to classify bug descriptions into *Critical, Major, Minor*. |
+| **Automated Test Generation** | Dynamically generates pytest test cases (Crash, API, Performance, Validation, UI). |
+| **Risk-Based Prioritization** | Orders tests by predicted risk (Impact × Likelihood × Speed). |
+| **Requirements Traceability (RTM)** | Automatically maps test cases to requirement IDs (REQ-001 ...). |
+| **Quality Gates** | Enforces minimum coverage and zero-failure thresholds before release. |
+| **APFD Metric Calculation** | Computes the Average Percentage of Fault Detection for prioritization analysis. |
+| **ISTQB® Alignment** | Fully implements concepts from *Advanced Level Test Manager & Analyst*. |
+
+---
+
+## 🏗️ Project Structure
 ```
 AI-BugTest/
-├── app/
-│   └── sample_app.py               # Sample app for generated tests
-├── data/
-│   └── bugs.csv                    # Sample bug dataset
-├── model/
-│   ├── train_model_advanced.py     # Model training (AI severity predictor)
-│   └── bug_severity_model.pkl      # Saved trained model
-├── testgen/
-│   └── generate_test.py            # AI + rule-based test generation logic
-├── prioritizer/
-│   └── prioritize.py               # Risk-based test prioritization
-├── tests/
-│   ├── __init__.py
-│   └── test_generated_cases.py     # Auto-generated test cases
-├── ui_streamlit.py                 # Streamlit UI (Predict → Generate → Run)
-├── run_pipeline.py                 # CLI pipeline version
+│
+├── app/                  # Sample app under test
+├── model/                # ML training scripts (TF-IDF + LR)
+├── testgen/              # Automatic test generator
+├── prioritizer/          # Risk prioritization + APFD calculator
+├── traceability/         # RTM builder (requirements to tests)
+├── scripts/              # Quality gates & CI integration
+├── tests/                # All generated & manual test cases
 ├── requirements.txt
-└── README.md
+├── README.md
+└── .gitignore
 ```
 
 ---
 
-## ⚙️ Setup Instructions
+## ⚙️ Installation
 
-### 1️⃣ Environment Setup
 ```bash
 git clone https://github.com/arrahimipour/AI-BugTest.git
 cd AI-BugTest
@@ -54,72 +56,79 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-If missing:
-```bash
-pip install streamlit pytest pytest-cov scikit-learn pandas joblib requests
-```
-
 ---
 
-### 2️⃣ Train the Model
-```bash
-python model/train_model_advanced.py
-```
-Trains the NLP model on `data/bugs.csv` and stores it at `model/bug_severity_model.pkl`.
+## 🚀 Usage Workflow
 
----
-
-### 3️⃣ Launch the Streamlit UI
+### 1️⃣ Train the Model
 ```bash
-streamlit run ui_streamlit.py
+python model\train_model_advanced.py
 ```
 
-Then in the browser:
-1. Enter a bug description (e.g., *"App crashes when uploading file larger than 10MB"*).  
-2. Click **🔮 Predict** to view predicted severity and probability.  
-3. Click **🧪 Generate & Run** to generate and execute a test file.  
-4. Click **⚖️ Prioritize & Run Top-50%** to execute risk-prioritized tests.
-
----
-
-### 4️⃣ Run Everything via CLI (Optional)
-```bash
-python run_pipeline.py
-```
-Runs training → prediction → test generation → pytest pipeline in one go.
-
----
-
-## 🧪 Testing & Coverage
+### 2️⃣ Generate and Run Tests
 ```bash
 pytest -q
-pytest --cov=app --cov-report=term-missing
+```
+
+### 3️⃣ Build Requirements Traceability Matrix (RTM)
+```bash
+python -m traceability.build_rtm
+```
+
+### 4️⃣ Check Quality Gates
+```bash
+python scripts\quality_gate.py
+```
+
+### 5️⃣ Run Prioritization and Compute APFD
+```bash
+python -m prioritizer.run_and_log
+python -m prioritizer.apfd
 ```
 
 ---
 
-## 📘 ISTQB® Alignment
+## 📊 Example Outputs
 
-| ISTQB® Concept | Implementation in AI-BugTest |
-|----------------|-------------------------------|
-| **Defect Severity & Priority** | AI predicts severity based on textual description |
-| **Risk-Based Testing** | `Risk = Impact × Likelihood` computed from model probabilities |
-| **Test Design Techniques** | Rule-based AI test generation (Crash/API/Perf/Validation/UI) |
-| **Test Automation Framework** | Fully automated via pytest + Streamlit pipeline |
-| **Regression Testing** | Every new bug generates a test that joins the regression suite |
+✅ **Quality Gate Passed**
+```
+Coverage: 80.00%
+✅ Quality gates passed.
+```
+
+📈 **APFD Metric**
+```
+APFD: 1.000
+```
+
+📋 **Generated RTM (traceability/rtm.csv)**
+| test_name | severity | type | req_id |
+|------------|-----------|------|--------|
+| tests/test_generated_cases.py::test_crash_case | critical | crash | REQ-001 |
+| tests/test_ui_alignment.py::test_ui_alignment | minor | ui | REQ-003 |
 
 ---
 
-## 🧩 Future Improvements (Graduate-Level Extensions)
-- 🧬 Replace TF-IDF with **Sentence-BERT embeddings** for semantic understanding
-- 🔁 Implement **Active Learning** to continuously improve defect classification
-- 🧮 Integrate **coverage-based prioritization** via `pytest-cov`
-- 🌐 Deploy as **FastAPI microservice** + frontend via **Next.js**
-- ⚙️ Integrate CI/CD workflow (GitHub Actions / Jenkins)
-- 📊 Include dashboards for test effectiveness and risk metrics
+## 🎓 Academic Context
+
+This project aligns with the **Advanced Software Testing (MSc)** curriculum  
+and ISTQB® Advanced Level modules:
+- **Test Manager** → Risk-Based Test Strategy, Entry/Exit Criteria  
+- **Test Analyst** → Test Design Techniques, Coverage Analysis  
+- **Technical Test Analyst** → Automation, Non-functional Testing, APFD
+
+---
+
+## 🧱 Next Steps (Planned)
+- REST API via **FastAPI** (`/predict`, `/generate`, `/prioritize`)
+- Web Dashboard via **Next.js** for visualization
+- Integration with CI/CD (GitHub Actions Quality Gate)
+- Paper submission to IEEE/Elsevier on *AI-driven Risk-Based Testing*
 
 ---
 
 ## 🧑‍💻 Author
-Developed by **Alireza Rahimipour Anaraki**  
-MSc Software Engineering — *AI and Software Testing Research*
+**Alireza Rahimipour Anaraki**  
+MSc Student, University of Tehran  
+📘 Course: *Advanced Software Testing (ISTQB® Aligned)*  
+📎 GitHub: [github.com/arrahimipour/AI-BugTest](https://github.com/arrahimipour/AI-BugTest)
