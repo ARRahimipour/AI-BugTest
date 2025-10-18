@@ -132,3 +132,4 @@ and ISTQB® Advanced Level modules:
 MSc Student, University of Tehran  
 📘 Course: *Advanced Software Testing (ISTQB® Aligned)*  
 📎 GitHub: [github.com/arrahimipour/AI-BugTest](https://github.com/arrahimipour/AI-BugTest)
+
