@@ -35,7 +35,6 @@ def test_performance_under_load():
 def gen_validation_test():
     return """
 def test_input_validation_boundaries():
-    # مثال: ورودی خالی/بسیار بزرگ/ایموچی
     try:
         app.run_test_case("invalid_input")
     except Exception:
@@ -56,7 +55,6 @@ def generate_test_code(description: str, severity: str) -> str:
     desc = (description or "").lower()
     sev = (severity or "").lower()
 
-    # API pattern detection
     api_url = None
     m = re.search(r'(https?://\\S+|/api/\\S+)', desc)
     if m:
@@ -64,7 +62,6 @@ def generate_test_code(description: str, severity: str) -> str:
         if api_url.startswith("/"):
             api_url = f"http://localhost:8000{api_url}"
 
-    # rule-based routing
     if any(k in desc for k in ["crash", "exception", "error 500", "fatal"]) or sev == "critical":
         body = gen_crash_test()
     elif api_url:

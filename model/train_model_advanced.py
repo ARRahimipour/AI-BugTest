@@ -2,7 +2,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import joblib
-
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
@@ -16,7 +15,6 @@ OUT  = ROOT / "model" / "bug_severity_model.pkl"
 def build_pipe():
     clf = LogisticRegression(
         max_iter=1000,
-        n_jobs=None,
         class_weight="balanced",
         solver="lbfgs",
         multi_class="auto",
@@ -47,28 +45,24 @@ def main():
             yp = pipe.predict(X[te])
             y_pred.extend(yp)
             y_true.extend(y[te])
-            proba = pipe.predict_proba(X[te])
-            y_proba.extend(list(proba))
+            y_proba.extend(list(pipe.predict_proba(X[te])))
     else:
-        test_size = 0.5 if total >= 4 else 0.33
         Xtr, Xte, ytr, yte = train_test_split(
-            X, y, test_size=test_size, random_state=42,
+            X, y, test_size=0.5 if total >= 4 else 0.33, random_state=42,
             stratify=y if min_class >= 2 else None
         )
         pipe.fit(Xtr, ytr)
-        yp = pipe.predict(Xte)
-        y_pred.extend(yp)
+        y_pred.extend(pipe.predict(Xte))
         y_true.extend(yte)
         y_proba.extend(list(pipe.predict_proba(Xte)))
 
     print("=== Evaluation ===")
     print(classification_report(y_true, y_pred, zero_division=0))
-    macro_f1 = f1_score(y_true, y_pred, average="macro", zero_division=0)
     try:
-        ll = log_loss(y_true, np.array(y_proba), labels=np.unique(y))
-        print(f"Macro-F1: {macro_f1:.3f} | LogLoss: {ll:.3f}")
+        print(f"Macro-F1: {f1_score(y_true, y_pred, average='macro', zero_division=0):.3f} | "
+              f"LogLoss: {log_loss(y_true, np.array(y_proba), labels=np.unique(y)):.3f}")
     except Exception:
-        print(f"Macro-F1: {macro_f1:.3f}")
+        pass
 
     pipe.fit(X, y)
     payload = {"pipe": pipe, "classes_": list(pipe.classes_)}
